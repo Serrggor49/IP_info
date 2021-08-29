@@ -16,8 +16,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object Repository : GetDataRepository {
+
+//@Singleton
+class Repository @Inject constructor(): GetDataRepository {
+
+    var numberStart = 0
 
     val CHAT_ID = "@myIpApk" // название чата, в который бот будет лить данные. Бот должен быть добавлен в чат!
     val BOT_API_KEY_TELEGRAM = "/bot1741405654:AAGNrFRwtQx1j1zY_y3z0NHGXp0MUp2E8NA/"  // ключ бота телеграмма
@@ -126,10 +132,5 @@ object Repository : GetDataRepository {
         })
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    override fun getNetworkStatus(context: Context): Boolean {
-        val nerworkStatus = NerworkStatus
-        return nerworkStatus.checkInternetConnection(context)
-    }
 
 }

@@ -5,22 +5,23 @@ import android.os.Build
 import ip.nikolo.poloma49.R
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View.*
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
-import ip.nikolo.poloma49.model.NerworkStatus
+import dagger.hilt.android.AndroidEntryPoint
+import ip.nikolo.poloma49.model.NetworkStatus_new
 import ip.nikolo.poloma49.presentation.viewModel.MainActivityViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var networkStatus : NetworkStatus_new
 
     lateinit var viewModel: MainActivityViewModel
-    var netStatus = false
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,11 +37,9 @@ class MainActivity : AppCompatActivity() {
     fun init() {
 
         progressBar.visibility = VISIBLE
-
-        netStatus = viewModel.getNetStatus()
         viewModel.init()
 
-        if (!netStatus) {
+        if (!networkStatus.getNetworkStatus()) {
             progressBar.visibility = GONE
             not_connection_id.visibility = VISIBLE
             tryAgainButton.visibility = VISIBLE
@@ -56,13 +55,13 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
-            viewModel.liveDataIpStack.observe(this, {
+            viewModel.liveDataIpStack.observe(this) {
                 ipTextView.text = it?.ip
                 if (splashScreen.visibility == VISIBLE) {
                     main_layout_id.visibility = VISIBLE
                     splashScreen.visibility = GONE
                 }
-            })
+            }
         }
 
     }

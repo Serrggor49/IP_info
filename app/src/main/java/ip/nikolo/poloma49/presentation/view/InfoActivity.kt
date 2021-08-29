@@ -1,14 +1,25 @@
 package ip.nikolo.poloma49.presentation.view
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ActivityContext
+import ip.nikolo.poloma49.MyApplication
 import ip.nikolo.poloma49.R
 import ip.nikolo.poloma49.presentation.viewModel.InfoActivityViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
+class InfoActivity: AppCompatActivity() {
 
-class InfoActivity : AppCompatActivity() {
+   // private val loginViewModel: InfoActivityViewModel by viewModel()
+
+    @Inject
+    lateinit var con: MyApplication
 
     lateinit var viewModel: InfoActivityViewModel
     lateinit var ipTextView: TextView
@@ -27,11 +38,15 @@ class InfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info)
         supportActionBar?.hide()
+        Log.d("MyLogs", "Info Act " + con.toString())
+        viewModel = ViewModelProvider(this).get(InfoActivityViewModel::class.java)
 
         init()
     }
 
-    fun init(){
+    fun init()  {
+        viewModel.init()
+
         ipTextView = findViewById(R.id.ip_text_view)
         countryTextView = findViewById(R.id.country_text_view)
         regionTextView = findViewById(R.id.region_text_view)
@@ -44,14 +59,15 @@ class InfoActivity : AppCompatActivity() {
         botTextView = findViewById(R.id.bot_text_view)
         abuseVelocity = findViewById(R.id.abuse_velocity_text_view)
 
-        viewModel = ViewModelProvider(this).get(InfoActivityViewModel::class.java)
+
+      ///  viewModel = ViewModelProvider(this, modelFactoryForInfo).get(InfoActivityViewModel::class.java)
 
         ipTextView.text = viewModel.liveData.value?.ip
         viewModel.liveData.observe(this, {
-            ipTextView.text = it.ip
-            countryTextView.text = it.country_name
-            regionTextView.text = it.region_name
-            typeTextView.text = it.type
+            ipTextView.text = it?.ip
+            countryTextView.text = it?.country_name
+            regionTextView.text = it?.region_name
+            typeTextView.text = it?.type
         })
 
         viewModel.liveDataQuality.observe(this, {
