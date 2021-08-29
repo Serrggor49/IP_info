@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class InfoActivityViewModel @Inject constructor(application: Application): AndroidViewModel(application) {
+class InfoActivityViewModel @Inject constructor(): ViewModel() {
 
     @Inject
     lateinit var repository: GetDataRepository
